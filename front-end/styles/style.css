@@ -1,0 +1,23 @@
+    /* Personalização da barra de rolagem */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f1f23;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #dc2626;
+        }
+        
+        /* Efeitos de sombra e brilho vermelho neon */
+        .brilho-vermelho:hover {
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
+        }
+        .borda-neon-ativa {
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.15);
+        }

@@ -11,33 +11,8 @@
     <!-- Google Fonts para tipografia elegante -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <script src="../back-end/tailwind.js">
-    </script>
-    <style>
-        /* Personalização da barra de rolagem */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #000000;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1f1f23;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #dc2626;
-        }
-        
-        /* Efeitos de sombra e brilho vermelho neon */
-        .brilho-vermelho:hover {
-            box-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
-        }
-        .borda-neon-ativa {
-            box-shadow: 0 0 10px rgba(220, 38, 38, 0.15);
-        }
-    </style>
+    <script src="back-end/tailwind.js"></script>
+    <link rel="stylesheet" href="front-end/styles/style.css">
 </head>
 <body class="bg-marca-fundoEscuro text-slate-100 font-sans min-h-screen flex flex-col overflow-x-hidden pb-16 lg:pb-0">
 
@@ -50,7 +25,7 @@
         <div class="bg-marca-fundoCard border border-marca-borda rounded-2xl w-full max-w-md p-6 lg:p-8 shadow-2xl relative z-10">
             <div class="flex flex-col items-center mb-6">
                 <div class="bg-gradient-to-tr to-marca-secundaria p-3 rounded-2xl text-white font-black text-2xl tracking-tight shadow-md shadow-marca-primaria/30 mb-3">
-                    <img src="../img/Alfabet logo.PNG" alt="logo da faculdade" class="h-14 w-auto object-contain">
+                    <img src="img/Alfabet logo.PNG" alt="logo da faculdade" class="h-14 w-auto object-contain">
                 </div>
                 <h2 class="text-2xl font-black text-slate-100 tracking-wider">CRIAR CONTA</h2>
                 <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest font-semibold text-center">Insira seus dados para acessar o simulador</p>
@@ -157,7 +132,7 @@
             <!-- Logótipo -->
             <div class="flex items-center gap-3">
     
-                <img src="../img/Alfabet logo.PNG" alt="Logo da Faculdade" class="h-10 w-auto object-contain">
+                <img src="img/Alfabet logo.PNG" alt="Logo da Faculdade" class="h-10 w-auto object-contain">
     
             <div>
                 <span class="text-lg font-extrabold tracking-widest text-slate-100">ALFA<span class="text-marca-primaria">BET</span></span>
@@ -572,6 +547,6 @@
     </div>
 
     <!-- Script de Gestão Dinâmica e Jogos -->
-    <script src="../back-end/main.js"></script>
+    <script src="back-end/main.js"></script>
 </body>
 </html>
