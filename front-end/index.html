@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alfa Bet - Plataforma Premium de Apostas</title>
+    <!-- Tailwind CSS para estilização moderna -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para ícones premium -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts para tipografia elegante -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="../back-end/tailwind.js">
+    </script>
+    <style>
+        /* Personalização da barra de rolagem */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f1f23;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #dc2626;
+        }
+        
+        /* Efeitos de sombra e brilho vermelho neon */
+        .brilho-vermelho:hover {
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
+        }
+        .borda-neon-ativa {
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-marca-fundoEscuro text-slate-100 font-sans min-h-screen flex flex-col overflow-x-hidden pb-16 lg:pb-0">
+
+    <!-- Container de Notificações Ativas -->
+    <div id="container-notificacoes" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- TELA DE CADASTRO (Bloqueia o Dashboard até ser preenchida) -->
+    <div id="tela-cadastro" class="fixed inset-0 bg-black z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-marca-secundaria/20 via-black to-black pointer-events-none"></div>
+        <div class="bg-marca-fundoCard border border-marca-borda rounded-2xl w-full max-w-md p-6 lg:p-8 shadow-2xl relative z-10">
+            <div class="flex flex-col items-center mb-6">
+                <div class="bg-gradient-to-tr to-marca-secundaria p-3 rounded-2xl text-white font-black text-2xl tracking-tight shadow-md shadow-marca-primaria/30 mb-3">
+                    <img src="../img/Alfabet logo.PNG" alt="logo da faculdade" class="h-14 w-auto object-contain">
+                </div>
+                <h2 class="text-2xl font-black text-slate-100 tracking-wider">CRIAR CONTA</h2>
+                <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest font-semibold text-center">Insira seus dados para acessar o simulador</p>
+            </div>
+
+            <form id="formulario-cadastro" onsubmit="executarCadastro(event)" class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Nome Completo</label>
+                    <input type="text" id="cadastro-nome" required placeholder="Digite seu nome completo" class="w-full bg-black border border-marca-borda rounded-xl px-4 py-3 text-slate-200 font-semibold focus:outline-none focus:border-marca-primaria transition-colors text-sm">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">E-mail</label>
+                    <input type="email" id="cadastro-email" required placeholder="exemplo@email.com" class="w-full bg-black border border-marca-borda rounded-xl px-4 py-3 text-slate-200 font-semibold focus:outline-none focus:border-marca-primaria transition-colors text-sm">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">CPF (Chave PIX)</label>
+                    <input type="text" id="cadastro-cpf" required placeholder="000.000.000-00" class="w-full bg-black border border-marca-borda rounded-xl px-4 py-3 text-slate-200 font-semibold focus:outline-none focus:border-marca-primaria transition-colors text-sm">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Senha</label>
+                    <input type="password" id="cadastro-senha" required placeholder="••••••••" class="w-full bg-black border border-marca-borda rounded-xl px-4 py-3 text-slate-200 font-semibold focus:outline-none focus:border-marca-primaria transition-colors text-sm">
+                </div>
+
+                <div class="flex items-center gap-2 py-1">
+                    <input type="checkbox" id="cadastro-termos" required class="accent-marca-primaria">
+                    <label for="cadastro-termos" class="text-[10px] text-slate-400">Declaro que sou maior de 18 anos e concordo com as regras.</label>
+                </div>
+
+                <button type="submit" class="w-full bg-marca-primaria hover:bg-red-700 text-white font-black py-4 rounded-xl transition-all brilho-vermelho flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+                    <i class="fa-solid fa-user-plus"></i> Cadastrar e Entrar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PAINEL PRINCIPAL (Ocultado até login/cadastro ser feito) -->
+    <div id="painel-principal" class="hidden flex-1 flex flex-col">
+        
+        <!-- Modal de Depósito Fictício -->
+        <div id="modal-deposito" class="fixed inset-0 bg-black/95 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+            <div class="bg-marca-fundoCard border border-marca-borda rounded-2xl w-full max-w-md overflow-hidden shadow-2xl transform scale-95 transition-all">
+                <div class="p-5 border-b border-marca-borda flex justify-between items-center">
+                    <h3 class="text-lg font-bold flex items-center gap-2 text-marca-primaria">
+                        <i class="fa-solid fa-wallet"></i> Depositar Saldo
+                    </h3>
+                    <button onclick="alternarModalDeposito()" class="text-slate-400 hover:text-slate-200 transition-colors">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <p class="text-slate-400 text-xs mb-4">Adicione saldo fictício à sua conta para testar a experiência completa.</p>
+                    
+                    <div class="grid grid-cols-3 gap-2 mb-4">
+                        <button onclick="definirValorDeposito(20)" class="bg-marca-fundoEscuro hover:bg-marca-borda border border-marca-borda py-2.5 rounded-xl font-bold text-marca-primaria transition-all">R$ 20</button>
+                        <button onclick="definirValorDeposito(50)" class="bg-marca-fundoEscuro hover:bg-marca-borda border border-marca-borda py-2.5 rounded-xl font-bold text-marca-primaria transition-all">R$ 50</button>
+                        <button onclick="definirValorDeposito(100)" class="bg-marca-fundoEscuro hover:bg-marca-borda border border-marca-borda py-2.5 rounded-xl font-bold text-marca-primaria transition-all">R$ 100</button>
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Valor Personalizado (R$)</label>
+                        <input type="number" id="entrada-deposito" value="50" min="5" max="10000" class="w-full bg-marca-fundoEscuro border border-marca-borda rounded-xl px-4 py-3 text-slate-100 font-bold focus:outline-none focus:border-marca-primaria transition-colors">
+                    </div>
+
+                    <button onclick="confirmarDeposito()" class="w-full bg-marca-primaria hover:bg-red-700 text-white font-black py-3.5 rounded-xl transition-all brilho-vermelho flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-solid fa-check"></i> Confirmar Depósito
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Saque Fictício -->
+        <div id="modal-saque" class="fixed inset-0 bg-black/95 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+            <div class="bg-marca-fundoCard border border-marca-borda rounded-2xl w-full max-w-md overflow-hidden shadow-2xl transform scale-95 transition-all">
+                <div class="p-5 border-b border-marca-borda flex justify-between items-center">
+                    <h3 class="text-lg font-bold flex items-center gap-2 text-slate-200">
+                        <i class="fa-solid fa-money-bill-transfer text-marca-primaria"></i> Sacar Saldo
+                    </h3>
+                    <button onclick="fecharModalSaque()" class="text-slate-400 hover:text-slate-200 transition-colors">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <p class="text-slate-400 text-xs mb-4">O valor será transferido para a chave PIX (CPF) vinculada à sua conta.</p>
+                    
+                    <div class="mb-4">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Chave PIX (CPF Cadastrado)</label>
+                        <input type="text" id="saque-cpf" readonly class="w-full bg-marca-fundoEscuro border border-marca-borda rounded-xl px-4 py-3 text-slate-500 font-bold focus:outline-none cursor-not-allowed text-sm">
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Valor do Saque (R$)</label>
+                        <input type="number" id="entrada-saque" value="100" min="10" max="10000" class="w-full bg-marca-fundoEscuro border border-marca-borda rounded-xl px-4 py-3 text-slate-100 font-bold focus:outline-none focus:border-marca-primaria transition-colors">
+                    </div>
+
+                    <button onclick="confirmarSaque()" class="w-full bg-marca-fundoEscuro border border-marca-primaria hover:bg-marca-primaria text-marca-primaria hover:text-white font-black py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-solid fa-check"></i> Solicitar Saque PIX
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cabeçalho Principal -->
+        <header class="bg-marca-fundoCard border-b border-marca-borda sticky top-0 z-40 px-4 lg:px-8 py-3.5 flex items-center justify-between">
+            <!-- Logótipo -->
+            <div class="flex items-center gap-3">
+    
+                <img src="../img/Alfabet logo.PNG" alt="Logo da Faculdade" class="h-10 w-auto object-contain">
+    
+            <div>
+                <span class="text-lg font-extrabold tracking-widest text-slate-100">ALFA<span class="text-marca-primaria">BET</span></span>
+                <span class="block text-[8px] uppercase tracking-widest font-bold text-slate-400" id="saudacao-usuario">Ambiente de Testes</span>
+            </div>
+            </div>
+
+            <!-- Abas de Navegação Centrais (Apenas Desktop) -->
+            <div class="hidden lg:flex bg-marca-fundoEscuro p-1 rounded-xl border border-marca-borda">
+                <button onclick="mudarAba('esportes')" class="aba-navegacao-botao px-6 py-2 rounded-lg font-bold text-xs transition-all flex items-center gap-2 text-marca-primaria bg-marca-fundoCard shadow" data-aba="esportes">
+                    <i class="fa-solid fa-futbol"></i> Esportes
+                </button>
+                <button onclick="mudarAba('cassino')" class="aba-navegacao-botao px-6 py-2 rounded-lg font-bold text-xs transition-all flex items-center gap-2 text-slate-400 hover:text-slate-100" data-aba="cassino">
+                    <i class="fa-solid fa-dice"></i> Cassino
+                </button>
+                <button onclick="mudarAba('minhas-apostas')" class="aba-navegacao-botao px-6 py-2 rounded-lg font-bold text-xs transition-all flex items-center gap-2 text-slate-400 hover:text-slate-100 relative" data-aba="minhas-apostas">
+                    <i class="fa-solid fa-ticket"></i> Boletim de Apostas
+                    <span id="distintivo-apostas-ativas" class="hidden absolute -top-1 -right-1 bg-marca-primaria text-white text-[9px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center">0</span>
+                </button>
+            </div>
+
+            <!-- Carteira de Usuário & Sair -->
+            <div class="flex items-center gap-3">
+                <div class="bg-marca-fundoEscuro border border-marca-borda pl-4 pr-1.5 py-1.5 rounded-xl flex items-center gap-3">
+                    <div class="flex flex-col hidden sm:flex">
+                        <span class="text-[8px] text-slate-400 uppercase font-bold">Saldo</span>
+                        <span id="saldo-exibido" class="text-xs lg:text-sm font-black text-marca-verdeDestaque transition-all duration-300">R$ 1.000,00</span>
+                    </div>
+                    <div class="flex gap-1.5">
+                        <button onclick="alternarModalDeposito()" class="bg-marca-primaria hover:bg-red-700 text-white font-black px-3 py-2 rounded-lg transition-all brilho-vermelho text-xs flex items-center gap-1.5" title="Depositar">
+                            <i class="fa-solid fa-plus-circle"></i> <span class="hidden md:inline">Depósito</span>
+                        </button>
+                        <button onclick="abrirModalSaque()" class="bg-marca-fundoCard hover:bg-marca-borda border border-marca-borda text-slate-200 font-black px-3 py-2 rounded-lg transition-all text-xs flex items-center gap-1.5" title="Sacar">
+                            <i class="fa-solid fa-money-bill-transfer text-marca-primaria"></i> <span class="hidden md:inline">Saque</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Botão de Sair da Conta -->
+                <button onclick="sairDaConta()" class="text-slate-500 hover:text-marca-vermelhoDestaque transition-colors ml-1 p-2 rounded-lg hover:bg-marca-fundoEscuro" title="Sair da Conta">
+                    <i class="fa-solid fa-right-from-bracket text-lg"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Estrutura Principal de Layout -->
+        <div class="flex-1 flex w-full relative">
+            
+            <!-- Painel Lateral Esquerdo (Esportes & Originais) -->
+            <aside class="hidden lg:flex flex-col w-64 bg-marca-fundoCard border-r border-marca-borda p-4 gap-6 shrink-0">
+                <!-- Esportes -->
+                <div>
+                    <h4 class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-3 px-2">Principais Esportes</h4>
+                    <div class="flex flex-col gap-1">
+                        <button onclick="mudarAba('esportes')" class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-3 bg-marca-fundoEscuro border-l-2 border-marca-primaria text-slate-100 font-bold text-xs">
+                            <i class="fa-solid fa-futbol text-marca-primaria text-sm w-5 text-center"></i> Futebol <span class="ml-auto bg-marca-borda text-[9px] px-1.5 py-0.5 rounded text-marca-primaria font-black uppercase">Vivo</span>
+                        </button>
+                        <button class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-3 text-slate-400 hover:text-slate-100 hover:bg-marca-fundoEscuro/50 transition-all text-xs font-semibold">
+                            <i class="fa-solid fa-basketball text-marca-primaria text-sm w-5 text-center"></i> Basquete
+                        </button>
+                        <button class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-3 text-slate-400 hover:text-slate-100 hover:bg-marca-fundoEscuro/50 transition-all text-xs font-semibold">
+                            <i class="fa-solid fa-gamepad text-marca-primaria text-sm w-5 text-center"></i> E-Sports
+                        </button>
+                        <button class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-3 text-slate-400 hover:text-slate-100 hover:bg-marca-fundoEscuro/50 transition-all text-xs font-semibold">
+                            <i class="fa-solid fa-baseball text-marca-primaria text-sm w-5 text-center"></i> Tênis
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Jogos Originais -->
+                <div>
+                    <h4 class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-3 px-2">Originais Cassino</h4>
+                    <div class="flex flex-col gap-1">
+                        <button onclick="mudarAba('cassino'); alternarJogoAtivoCassino('foguete');" class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-3 text-slate-400 hover:text-slate-100 hover:bg-marca-fundoEscuro/40 transition-all text-xs font-semibold">
+                            <i class="fa-solid fa-plane-up text-marca-primaria text-sm w-5 text-center animate-pulse"></i> Crash (Aviador)
+                        </button>
+                        <button onclick="mudarAba('cassino'); alternarJogoAtivoCassino('roleta');" class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-3 text-slate-400 hover:text-slate-100 hover:bg-marca-fundoEscuro/40 transition-all text-xs font-semibold">
+                            <i class="fa-solid fa-circle-notch text-marca-primaria text-sm w-5 text-center"></i> Roleta Alfa
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ajuda / Contato -->
+                <div class="mt-auto bg-marca-fundoEscuro border border-marca-borda p-4 rounded-xl">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="bg-marca-primaria/10 p-2 rounded-lg text-marca-primaria">
+                            <i class="fa-solid fa-headset text-base"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-xs font-bold text-slate-200">Suporte ao Cliente</h5>
+                            <p class="text-[9px] text-slate-400">Canal ativo 24/7</p>
+                        </div>
+                    </div>
+                    <button onclick="mostrarNotificacao('Apoio ao cliente indisponível no protótipo offline.', 'warning')" class="w-full bg-marca-borda hover:bg-marca-borda/80 text-slate-200 py-1.5 rounded-lg font-bold text-xs transition-all">
+                        Iniciar Conversa
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Área de Conteúdo Principal -->
+            <main class="flex-1 p-4 lg:p-6 overflow-y-auto max-h-[calc(100vh-73px)]">
+
+                <!-- ABA: ESPORTES -->
+                <section id="aba-conteudo-esportes" class="aba-painel">
+                    <div class="bg-gradient-to-r from-black to-marca-secundaria/35 border border-marca-primaria/25 rounded-2xl p-6 mb-6 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div class="absolute -top-12 -left-12 w-48 h-48 bg-marca-primaria/10 rounded-full blur-3xl"></div>
+                        <div class="absolute -bottom-12 right-12 w-48 h-48 bg-marca-secundaria/15 rounded-full blur-3xl"></div>
+                        <div class="z-10 text-center md:text-left">
+                            <span class="bg-marca-primaria/20 text-marca-primaria text-[10px] uppercase font-black px-2.5 py-1 rounded-full tracking-wider border border-marca-primaria/25">Bônus de Boas-vindas</span>
+                            <h2 class="text-xl lg:text-2xl font-black mt-3 tracking-tight">Duplique o seu primeiro depósito!</h2>
+                            <p class="text-slate-400 text-xs mt-2 max-w-lg">Faça um depósito simulado hoje e garanta um bônus de 100% de saldo extra até <span class="text-marca-primaria font-bold">R$ 500,00</span> na sua carteira.</p>
+                        </div>
+                        <div class="shrink-0 z-10">
+                            <button onclick="alternarModalDeposito()" class="bg-marca-primaria hover:bg-red-700 text-white font-black px-5 py-3 rounded-xl transition-all brilho-vermelho text-xs flex items-center gap-2">
+                                <i class="fa-solid fa-gift"></i> Ativar Bônus
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-extrabold flex items-center gap-2 text-slate-100">
+                            <span class="inline-block w-2.5 h-2.5 bg-marca-primaria rounded-full animate-ping"></span>
+                            Eventos de Futebol Ao Vivo
+                        </h3>
+                        <span class="text-[10px] text-slate-400">Odds atualizam em tempo real</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-3.5" id="container-jogos-ao-vivo">
+                        <!-- Gerado de forma dinâmica por JavaScript -->
+                    </div>
+                </section>
+
+                <!-- ABA: CASSINO (Crash & Roleta) -->
+                <section id="aba-conteudo-cassino" class="aba-painel hidden">
+                    <!-- Seletor Interno de Jogos do Cassino -->
+                    <div class="flex gap-2 mb-6 border-b border-marca-borda pb-4">
+                        <button id="aba-sub-foguete" onclick="alternarJogoAtivoCassino('foguete')" class="bg-marca-primaria text-white font-extrabold text-xs px-5 py-2.5 rounded-xl transition-all shadow-md">
+                            <i class="fa-solid fa-plane-up mr-2"></i> Jogo do Foguete (Crash)
+                        </button>
+                        <button id="aba-sub-roleta" onclick="alternarJogoAtivoCassino('roleta')" class="bg-marca-fundoCard hover:bg-marca-borda text-slate-400 font-extrabold text-xs px-5 py-2.5 rounded-xl transition-all">
+                            <i class="fa-solid fa-circle-notch mr-2"></i> Roleta Alfa (Double)
+                        </button>
+                    </div>
+
+                    <!-- CONTAINER JOGO DO FOGUETE (CRASH) -->
+                    <div id="painel-jogo-foguete" class="flex flex-col lg:flex-row gap-5">
+                        <div class="w-full lg:w-80 bg-marca-fundoCard border border-marca-borda rounded-2xl p-5 flex flex-col gap-4">
+                            <div class="flex border-b border-marca-borda pb-3.5 justify-between items-center">
+                                <h4 class="font-bold text-sm flex items-center gap-2 text-marca-primaria">
+                                    <i class="fa-solid fa-plane-up animate-pulse"></i> Jogo Crash
+                                </h4>
+                                <span class="text-[9px] bg-marca-primaria/20 text-marca-primaria px-2 py-0.5 rounded font-black uppercase">Exclusivo Alfa</span>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Montante da Aposta (R$)</label>
+                                <input type="number" id="valor-aposta-crash" value="10" min="1" max="5000" class="w-full bg-black border border-marca-borda rounded-xl px-4 py-3 text-slate-100 font-bold focus:outline-none focus:border-marca-primaria transition-colors text-sm">
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-1.5">
+                                <button onclick="ajustarApostaCrash('metade')" class="bg-black hover:bg-marca-borda border border-marca-borda py-2 rounded-lg text-xs font-bold text-slate-400 transition-all">½</button>
+                                <button onclick="ajustarApostaCrash('dobro')" class="bg-black hover:bg-marca-borda border border-marca-borda py-2 rounded-lg text-xs font-bold text-slate-400 transition-all">2x</button>
+                                <button onclick="ajustarApostaCrash('maximo')" class="bg-black hover:bg-marca-borda border border-marca-borda py-2 rounded-lg text-xs font-bold text-slate-400 transition-all">Máx</button>
+                            </div>
+
+                            <button id="botao-jogar-crash" onclick="dispararJogoCrash()" class="w-full bg-marca-primaria hover:bg-red-700 text-white font-black py-4 rounded-xl transition-all brilho-vermelho text-sm flex flex-col items-center justify-center gap-0.5">
+                                <span>INICIAR JOGO</span>
+                            </button>
+                        </div>
+
+                        <!-- Tela do Gráfico do Crash e Histórico -->
+                        <div class="flex-1 flex flex-col gap-4">
+                            <div class="bg-marca-fundoCard border border-marca-borda rounded-2xl overflow-hidden relative min-h-[340px] flex flex-col items-center justify-center p-0">
+                                <canvas id="canvas-crash" class="w-full h-full min-h-[340px] block bg-black"></canvas>
+                                
+                                <div id="hud-tela-crash" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
+                                    <div id="estado-crash-ocioso" class="flex flex-col items-center gap-3 text-center">
+                                        <div class="w-16 h-16 rounded-full bg-marca-primaria/10 text-marca-primaria flex items-center justify-center border border-marca-primaria/25 text-2xl">
+                                            <i class="fa-solid fa-plane-up"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="font-bold text-sm text-slate-200">O Foguete Está Pronto</h5>
+                                            <p class="text-slate-400 text-[11px] mt-1">Configure o valor e clique em "Iniciar Jogo"</p>
+                                        </div>
+                                    </div>
+
+                                    <div id="estado-crash-jogando" class="hidden flex-col items-center justify-center text-center">
+                                        <span class="text-[10px] uppercase tracking-widest text-marca-primaria font-bold mb-1">Multiplicador Atual</span>
+                                        <h2 id="exibicao-multiplicador-crash" class="text-6xl md:text-7xl font-black text-slate-100 tracking-tight transition-all">1.00x</h2>
+                                        <p class="text-marca-primaria font-semibold text-xs mt-2 flex items-center gap-1.5 justify-center">
+                                            <span class="inline-block w-2 h-2 bg-marca-primaria rounded-full animate-ping"></span>
+                                            Em voo...
+                                        </p>
+                                    </div>
+
+                                    <div id="estado-crash-explodiu" class="hidden flex-col items-center gap-3 text-center">
+                                        <div class="w-16 h-16 rounded-full bg-marca-primaria/10 text-marca-primaria flex items-center justify-center border border-marca-primaria/25 text-3xl animate-bounce">
+                                            <i class="fa-solid fa-explosion"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="font-bold text-lg text-marca-primaria">EXPLODIU!</h5>
+                                            <p class="text-slate-400 text-xs mt-1">O voo terminou em <span id="multiplicador-final-crash" class="font-black text-slate-100">1.00x</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Histórico Crash -->
+                            <div>
+                                <h4 class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Últimos Resultados - Crash</h4>
+                                <div id="historico-resultados-crash" class="flex flex-wrap gap-2">
+                                    <!-- Inserido via JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CONTAINER JOGO DA ROLETA ALFA (DOUBLE) -->
+                    <div id="painel-jogo-roleta" class="flex flex-col lg:flex-row gap-5 hidden">
+                        <div class="w-full lg:w-80 bg-marca-fundoCard border border-marca-borda rounded-2xl p-5 flex flex-col gap-4">
+                            <div class="flex border-b border-marca-borda pb-3.5 justify-between items-center">
+                                <h4 class="font-bold text-sm flex items-center gap-2 text-marca-primaria">
+                                    <i class="fa-solid fa-circle-notch animate-spin-slow"></i> Roleta Alfa (Double)
+                                </h4>
+                                <span class="text-[9px] bg-marca-primaria/20 text-marca-primaria px-2 py-0.5 rounded font-black uppercase">Alpha VIP</span>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Valor da Aposta (R$)</label>
+                                <input type="number" id="valor-aposta-roleta" value="10" min="1" max="5000" class="w-full bg-black border border-marca-borda rounded-xl px-4 py-3 text-slate-100 font-bold focus:outline-none focus:border-marca-primaria transition-colors text-sm">
+                            </div>
+
+                            <!-- Botões de Seleção de Cor da Aposta -->
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Escolha uma Cor</label>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button onclick="selecionarCorApostaRoleta('preto')" id="btn-cor-preto" class="border-2 border-slate-700 bg-black text-slate-300 font-black py-2.5 rounded-xl text-xs flex flex-col items-center hover:brightness-110">
+                                        <span>PRETO</span>
+                                        <span class="text-[9px] font-normal opacity-85">10x Retorno</span>
+                                    </button>
+                                    <button onclick="selecionarCorApostaRoleta('verde')" id="btn-cor-verde" class="border-2 border-transparent bg-marca-verdeDestaque hover:brightness-110 text-black font-black py-2.5 rounded-xl text-xs flex flex-col items-center">
+                                        <span>VERDE</span>
+                                        <span class="text-[9px] font-normal opacity-95">2x Retorno</span>
+                                    </button>
+                                    <button onclick="selecionarCorApostaRoleta('vermelho')" id="btn-cor-vermelho" class="border-2 border-marca-primaria bg-marca-primaria text-white font-black py-2.5 rounded-xl text-xs flex flex-col items-center hover:brightness-110">
+                                        <span>VERMELHO</span>
+                                        <span class="text-[9px] font-normal opacity-85">2x Retorno</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button id="botao-girar-roleta" onclick="dispararJogoRoleta()" class="w-full bg-marca-primaria hover:bg-red-700 text-white font-black py-4 rounded-xl transition-all brilho-vermelho text-sm flex items-center justify-center gap-1.5 uppercase tracking-wider">
+                                <i class="fa-solid fa-play"></i> Girar Roleta
+                            </button>
+                        </div>
+
+                        <!-- Tela do Gráfico da Roleta e Histórico -->
+                        <div class="flex-1 flex flex-col gap-4">
+                            <div class="bg-marca-fundoCard border border-marca-borda rounded-2xl overflow-hidden relative min-h-[340px] flex flex-col items-center justify-center p-0">
+                                <canvas id="canvas-roleta" class="w-full h-full min-h-[340px] block bg-black"></canvas>
+                                
+                                <div class="absolute inset-x-0 bottom-4 text-center pointer-events-none z-10 flex flex-col items-center">
+                                    <div id="hud-estado-roleta" class="bg-black/80 px-4 py-2 border border-marca-borda rounded-xl">
+                                        <span class="text-xs font-bold text-slate-400" id="texto-estado-roleta">Faça sua aposta!</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Histórico Roleta -->
+                            <div>
+                                <h4 class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2">Últimos Resultados - Roleta</h4>
+                                <div id="historico-resultados-roleta" class="flex flex-wrap gap-2">
+                                    <!-- Inserido via JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ABA: MEUS BOLETINS -->
+                <section id="aba-conteudo-minhas-apostas" class="aba-painel hidden">
+                    <h3 class="text-base font-extrabold mb-4 flex items-center gap-2 text-slate-100">
+                        <i class="fa-solid fa-ticket text-marca-primaria"></i>
+                        Histórico de Apostas Registradas
+                    </h3>
+
+                    <div class="bg-marca-fundoCard border border-marca-borda rounded-2xl overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-marca-borda bg-marca-fundoEscuro text-[10px] uppercase tracking-wider text-slate-400 font-bold">
+                                        <th class="p-4">Evento / Seleção</th>
+                                        <th class="p-4">Mercado</th>
+                                        <th class="p-4">Aposta</th>
+                                        <th class="p-4">Odds</th>
+                                        <th class="p-4">Ganho Potencial</th>
+                                        <th class="p-4">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabela-corpo-minhas-apostas">
+                                    <tr id="linha-tabela-vazia">
+                                        <td colspan="6" class="p-8 text-center text-slate-500 text-xs">
+                                            Nenhum bilhete registrado neste dispositivo. Faça uma aposta nos esportes ao vivo ou jogue no cassino!
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Barra Lateral Direita (Cupom de Apostas) -->
+            <aside id="barra-lateral-boletim" class="hidden xl:flex flex-col w-80 bg-marca-fundoCard border-l border-marca-borda shrink-0">
+                <!-- Cabeçalho do Boletim -->
+                <div class="p-4 border-b border-marca-borda flex items-center justify-between">
+                    <span class="font-bold flex items-center gap-2 text-xs">
+                        <i class="fa-solid fa-clipboard-list text-marca-primaria"></i> Cupom de Apostas
+                    </span>
+                    <span id="contador-boletim" class="bg-marca-primaria/20 text-marca-primaria text-[10px] font-black px-2 py-0.5 rounded">0</span>
+                </div>
+
+                <!-- Conteúdo do Cupom -->
+                <div id="conteudo-boletim" class="flex-1 flex flex-col justify-between overflow-y-auto">
+                    <div id="boletim-vazio" class="p-8 text-center flex flex-col items-center justify-center flex-1">
+                        <div class="w-14 h-14 rounded-full bg-marca-fundoEscuro border border-marca-borda flex items-center justify-center text-slate-500 text-lg mb-3">
+                            <i class="fa-solid fa-add text-marca-primaria"></i>
+                        </div>
+                        <h5 class="text-slate-300 font-bold text-xs">Cupom Vazio</h5>
+                        <p class="text-slate-500 text-[11px] mt-2 leading-relaxed">Selecione as odds em qualquer um dos jogos ao vivo para adicionar uma aposta ao seu boletim.</p>
+                    </div>
+
+                    <!-- Detalhe da Seleção Ativa -->
+                    <div id="boletim-ativo" class="hidden p-4 flex-col gap-4 flex-1 justify-between">
+                        <div class="bg-marca-fundoEscuro border border-marca-borda rounded-xl p-4 relative">
+                            <button onclick="limparBoletim()" class="absolute top-3 right-3 text-slate-500 hover:text-slate-300 transition-colors">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                            <span id="boletim-esporte" class="text-[9px] uppercase tracking-wider text-marca-primaria font-bold">Futebol</span>
+                            <h4 id="boletim-jogo" class="text-xs font-bold text-slate-200 mt-1">Equipe A vs Equipe B</h4>
+                            
+                            <div class="flex items-center justify-between mt-4 bg-marca-fundoCard/60 p-2.5 rounded-lg border border-marca-borda/40">
+                                <div>
+                                    <span class="text-[9px] text-slate-400 block">Opção</span>
+                                    <span id="boletim-selecao" class="text-xs font-bold text-slate-100">Resultado Final</span>
+                                </div>
+                                <span id="boletim-odds" class="text-xs font-black text-marca-primaria bg-marca-primaria/15 px-2.5 py-1 rounded">1.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Introdução de Stake e Cálculos -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Valor a Apostar (R$)</span>
+                                <span onclick="definirValorMaximoBoletim()" class="text-[10px] text-marca-primaria cursor-pointer hover:underline font-bold uppercase tracking-wider">Máximo</span>
+                            </div>
+                            <input type="number" id="valor-aposta-boletim" value="50" min="5" max="50000" oninput="calcularRetornoBoletim()" class="w-full bg-marca-fundoEscuro border border-marca-borda rounded-xl px-4 py-3.5 text-slate-100 font-black focus:outline-none focus:border-marca-primaria transition-colors text-right text-base">
+                            
+                            <div class="flex flex-col gap-2 mt-4 pt-4 border-t border-marca-borda">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-slate-400">Total de Cotações</span>
+                                    <span id="boletim-calc-odds" class="font-bold text-slate-200">1.00</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-slate-400">Ganhos Potenciais</span>
+                                    <span id="boletim-calc-retorno" class="font-black text-marca-verdeDestaque text-sm">R$ 0,00</span>
+                                </div>
+                            </div>
+
+                            <button onclick="registrarApostaBoletim()" class="w-full mt-4 bg-marca-primaria hover:bg-red-700 text-white font-black py-4 rounded-xl transition-all brilho-vermelho text-xs flex items-center justify-center gap-2 uppercase tracking-wider">
+                                <i class="fa-solid fa-circle-dollar-to-slot"></i> Registrar Aposta
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Barra de Navegação Inferior (Apenas Mobile) -->
+        <nav class="xl:hidden fixed bottom-0 left-0 right-0 bg-marca-fundoCard border-t border-marca-borda flex justify-around items-center py-2.5 z-40">
+            <button onclick="mudarAba('esportes')" class="celular-navegacao-botao flex flex-col items-center gap-1 text-marca-primaria" data-aba-celular="esportes">
+                <i class="fa-solid fa-futbol text-base"></i>
+                <span class="text-[9px] font-bold">Esportes</span>
+            </button>
+            <button onclick="mudarAba('cassino')" class="celular-navegacao-botao flex flex-col items-center gap-1 text-slate-400" data-aba-celular="cassino">
+                <i class="fa-solid fa-dice text-base"></i>
+                <span class="text-[9px] font-bold">Casino</span>
+            </button>
+            <button onclick="abrirBoletimCelular()" class="celular-navegacao-botao flex flex-col items-center gap-1 text-slate-400 relative">
+                <i class="fa-solid fa-clipboard-list text-base"></i>
+                <span class="text-[9px] font-bold">Cupom</span>
+                <span id="distintivo-boletim-celular" class="hidden absolute -top-1 -right-1 bg-marca-primaria text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center">0</span>
+            </button>
+            <button onclick="mudarAba('minhas-apostas')" class="celular-navegacao-botao flex flex-col items-center gap-1 text-slate-400" data-aba-celular="minhas-apostas">
+                <i class="fa-solid fa-ticket text-base"></i>
+                <span class="text-[9px] font-bold">Boletins</span>
+            </button>
+        </nav>
+
+        <!-- Overlay de Cupom de Apostas (Apenas Mobile) -->
+        <div id="overlay-boletim-celular" class="fixed inset-0 bg-black/85 z-50 flex items-end justify-center hidden">
+            <div class="bg-marca-fundoCard w-full rounded-t-3xl border-t border-marca-borda max-h-[85vh] flex flex-col">
+                <div class="p-4 border-b border-marca-borda flex justify-between items-center">
+                    <span class="font-bold flex items-center gap-2 text-xs">
+                        <i class="fa-solid fa-clipboard-list text-marca-primaria"></i> Cupom de Apostas
+                    </span>
+                    <button onclick="fecharBoletimCelular()" class="text-slate-400 p-2"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div id="container-boletim-celular" class="p-4 overflow-y-auto"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de Gestão Dinâmica e Jogos -->
+    <script src="../back-end/main.js"></script>
+</body>
+</html>
